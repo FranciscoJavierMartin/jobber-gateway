@@ -43,6 +43,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.11.0",
     "@franciscojaviermartin/jobber-shared": "^0.0.6",
+    "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "compression": "^1.7.4",
     "cookie-session": "^2.1.0",

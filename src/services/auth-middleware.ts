@@ -8,6 +8,8 @@ import {
 import { config } from '@gateway/config';
 
 class AuthMiddleware {
+  constructor() {}
+
   public verifyUser(req: Request, _res: Response, next: NextFunction): void {
     if (!req.session?.jwt) {
       throw new UnauthorizedError(
