@@ -20,9 +20,13 @@ import {
   IErrorResponse,
   winstonLogger,
 } from '@franciscojaviermartin/jobber-shared';
+import { config } from '@gateway/config';
 
-const SERVER_PORT = 4000;
-const log: Logger = winstonLogger('', 'apiGateway', 'debug');
+const log: Logger = winstonLogger(
+  config.ELASTIC_SEARCH_URL,
+  'apiGateway',
+  'debug'
+);
 
 export class GatewayServer {
   constructor(private app: Application) {}
@@ -41,16 +45,16 @@ export class GatewayServer {
     app.use(
       cookieSession({
         name: 'session',
-        keys: [],
+        keys: [config.SECRET_KEY_ONE, config.SECRET_KEY_TWO],
         maxAge: 24 * 7 * 3600000,
-        secure: false,
+        secure: config.NODE_ENV !== 'development',
       })
     );
     app.use(hpp());
     app.use(helmet());
     app.use(
       cors({
-        origin: '',
+        origin: config.CLIENT_URL,
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       })
@@ -104,8 +108,8 @@ export class GatewayServer {
   private async startHttpServer(httpServer: http.Server): Promise<void> {
     try {
       log.info(`Gateway server has started with process id ${process.pid}`);
-      httpServer.listen(SERVER_PORT, () => {
-        log.info(`Gateway server running on port ${SERVER_PORT}`);
+      httpServer.listen(config.SERVER_PORT, () => {
+        log.info(`Gateway server running on port ${config.SERVER_PORT}`);
       });
     } catch (error) {
       log.log('error', 'GatewayService startHttpServer() error method:', error);
