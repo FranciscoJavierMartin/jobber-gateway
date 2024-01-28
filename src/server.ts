@@ -21,6 +21,7 @@ import {
   winstonLogger,
 } from '@franciscojaviermartin/jobber-shared';
 import { config } from '@gateway/config';
+import { elasticSearch } from '@gateway/elasticsearch';
 
 const log: Logger = winstonLogger(
   config.ELASTIC_SEARCH_URL,
@@ -34,8 +35,8 @@ export class GatewayServer {
   public start(): void {
     this.securityMiddleware(this.app);
     this.standardMiddleware(this.app);
-    this.routesMiddleware(this.app);
-    this.startElasticSearch(this.app);
+    this.routesMiddleware();
+    this.startElasticSearch();
     this.errorHandler(this.app);
     this.startServer(this.app);
   }
@@ -67,9 +68,11 @@ export class GatewayServer {
     app.use(urlencoded({ limit: '200mb', extended: true }));
   }
 
-  private routesMiddleware(_app: Application): void {}
+  private routesMiddleware(): void {}
 
-  private startElasticSearch(_app: Application): void {}
+  private startElasticSearch(): void {
+    elasticSearch.checkConnection();
+  }
 
   private errorHandler(app: Application): void {
     app.use('*', (req: Request, res: Response, next: NextFunction) => {
